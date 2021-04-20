@@ -89,7 +89,7 @@ export default function App() {
       <p id="response">(Case matters)</p>
       <br />
       <button onClick={onclick}>Check</button>
-      <h3>Distinct Sources</h3>
+      {state.sources.length > 0 && <h3>Distinct Sources</h3>}
       <ul>
         {state.sources.map((s) => (
           <li>
@@ -99,7 +99,7 @@ export default function App() {
           </li>
         ))}
       </ul>
-      <h3>Verbose Sources</h3>
+      {state.versions.length > 0 && <h3>Verbose Sources</h3>}
       <ul>
         {state.versions.map((v) => (
           <li key={v}>
