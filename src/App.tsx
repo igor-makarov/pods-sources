@@ -21,7 +21,10 @@ export default function App() {
     setState({versions: [], sources: []});
 
     const v = document.getElementById("main") as HTMLInputElement;
-    v.blur();
+    const isKeyboardOpen = window.screen.height - 300 > window.visualViewport.height;
+    if (isKeyboardOpen) {
+      v.blur();
+    }
     const podname = v.value.trim();
     const sha = md5(podname);
     const versionsURL = `https://cdn.cocoapods.org/all_pods_versions_${sha[0]}_${sha[1]}_${sha[2]}.txt`;
