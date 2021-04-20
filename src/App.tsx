@@ -54,7 +54,7 @@ export default function App() {
       document.getElementById(`version-${v}`)!.innerText = sourceText;
       const source = json.source.git || json.source.http;
       if (source != null) {
-        document.getElementById(`color-${v}`)!.style.backgroundColor = "#" + md5Hex(source).slice(0, 6);
+        document.getElementById(`color-${v}`)!.style.color = "#" + md5Hex(source).slice(0, 6);
       }
 
       if (json.source.git != null) {
@@ -87,14 +87,13 @@ export default function App() {
       <h1>Check Podspec Sources</h1>
       <input id="main" onKeyDown={onkeydown}/>
       <p id="response">(Case matters)</p>
-      <br />
       <button onClick={onclick}>Check</button>
       {state.sources.length > 0 && <h3>Distinct Sources</h3>}
       <ul>
         {state.sources.map((s) => (
           <li>
-            <p>
-              {s}
+            <p className="code">
+              <code>{s}</code>
             </p>
           </li>
         ))}
@@ -103,10 +102,11 @@ export default function App() {
       <ul>
         {state.versions.map((v) => (
           <li key={v}>
-            <p>
-              <div className="dot" id={`color-${v}`} />
-              {v}
-              <code id={`version-${v}`}></code>
+            <p className="code">
+              <span className="dot" id={`color-${v}`}>• </span>
+              <span>{v}</span>
+              <br />
+              <span id={`version-${v}`}></span>
             </p>
           </li>
         ))}
