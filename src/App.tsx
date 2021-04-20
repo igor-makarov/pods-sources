@@ -103,7 +103,7 @@ export default function App() {
         {state.versions.map((v) => (
           <li key={v}>
             <p className="code">
-              <span className="dot" id={`color-${v}`}>• </span>
+              <span className="dot" id={`color-${v}`}>⬤ </span>
               <span>{v}</span>
               <br />
               <span id={`version-${v}`}></span>
