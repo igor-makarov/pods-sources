@@ -54,10 +54,17 @@ export default function App() {
     return false;
   };
 
+  const onkeydown = async (e: any) => {
+    if (e.key === 'Enter') {
+      e.stopPropagation();
+      await onclick(e);
+    }
+  };
+
   return (
     <div className="App">
       <h1>Check Podspec Sources</h1>
-      <input id="main" />
+      <input id="main" onKeyDown={onkeydown}/>
       <p id="response">(Case matters)</p>
       <br />
       <button onClick={onclick}>Check</button>
