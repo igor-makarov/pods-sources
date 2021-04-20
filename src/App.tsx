@@ -21,6 +21,7 @@ export default function App() {
     setState({versions: [], sources: []});
 
     const v = document.getElementById("main") as HTMLInputElement;
+    v.blur();
     const podname = v.value.trim();
     const sha = md5(podname);
     const versionsURL = `https://cdn.cocoapods.org/all_pods_versions_${sha[0]}_${sha[1]}_${sha[2]}.txt`;
@@ -85,9 +86,9 @@ export default function App() {
   return (
     <div className="App">
       <h1>Check Podspec Sources</h1>
-      <input id="main" onKeyDown={onkeydown}/>
+      <input className="form" id="main" onKeyDown={onkeydown} placeholder="Enter pod name"/>
       <p id="response">(Case matters)</p>
-      <button onClick={onclick}>Check</button>
+      <button className="form" onClick={onclick}>Check</button>
       {state.sources.length > 0 && <h3>Distinct Sources</h3>}
       <ul>
         {state.sources.map((s) => (
