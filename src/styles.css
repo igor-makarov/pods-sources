@@ -1,0 +1,17 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+body {
+  font-size: 2rem;
+}
+
+li {
+  list-style: none;
+}
+
+code {
+  max-width: 100%;
+  word-wrap: word-wrap;
+}
