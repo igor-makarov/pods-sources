@@ -5,7 +5,12 @@ import semverSort from "semver-sort";
 import md5Hex from "md5-hex";
 
 export default function App() {
-  const [versions, setVersions] = useState([] as string[]);
+  interface MyType {
+    versions: string[];
+    sources: string[];
+  }
+
+  const [state, setState] = useState({versions: [], sources: []} as MyType);
 
   const onclick = async (e: any) => {
     e.stopPropagation();
@@ -13,7 +18,7 @@ export default function App() {
       "response"
     ) as HTMLParagraphElement;
     responseElement.textContent = "";
-    setVersions([]);
+    setState({versions: [], sources: []});
 
     const v = document.getElementById("main") as HTMLInputElement;
     const podname = v.value.trim();
@@ -32,24 +37,40 @@ export default function App() {
         "Could not find Pod versions, typo or capitalization wrong?");
     }
 
-    const versions = thisLine.replace(podname + "/", "").split("/");
+    let versions = thisLine.replace(podname + "/", "").split("/");
     try {
-      setVersions(semverSort.desc(versions));
+      versions = semverSort.desc(versions);
     } catch (error) {
-      setVersions(versions.reverse());
+      versions = versions.reverse();
     }
+    setState({versions: versions, sources: []})
 
     // https://cdn.jsdelivr.net/cocoa/Specs/c/0/1/SBTUITestTunnelCommon/6.6.1/SBTUITestTunnelCommon.podspec.json
-    versions.map(async (v) => {
+    const sources = await Promise.all(versions.map(async (v) => {
       const url = `https://cdn.jsdelivr.net/cocoa/Specs/${sha[0]}/${sha[1]}/${sha[2]}/${podname}/${v}/${podname}.podspec.json`;
       const res = await fetch(url);
       const json = await res.json();
       const sourceText = JSON.stringify(json.source);
       document.getElementById(`version-${v}`)!.innerText = sourceText;
-      const source = json.source.git || "12313";
-      document.getElementById(`color-${v}`)!.style.backgroundColor =
-        "#" + md5Hex(source).slice(0, 6);
-    });
+      const source = json.source.git || json.source.http;
+      if (source != null) {
+        document.getElementById(`color-${v}`)!.style.backgroundColor = "#" + md5Hex(source).slice(0, 6);
+      }
+
+      if (json.source.git != null) {
+        return json.source.git
+      }
+      if (json.source.http != null) {
+        try {
+          const parsedSource = new URL(source);
+          return parsedSource.host;
+        } catch (error) { }
+      }
+      return source
+    }));
+
+    const distinctSources = [...new Set(sources)].sort();
+    setState({versions: versions, sources: distinctSources})
 
     return false;
   };
@@ -68,8 +89,19 @@ export default function App() {
       <p id="response">(Case matters)</p>
       <br />
       <button onClick={onclick}>Check</button>
+      <h3>Distinct Sources</h3>
       <ul>
-        {versions.map((v) => (
+        {state.sources.map((s) => (
+          <li>
+            <p>
+              {s}
+            </p>
+          </li>
+        ))}
+      </ul>
+      <h3>Verbose Sources</h3>
+      <ul>
+        {state.versions.map((v) => (
           <li key={v}>
             <p>
               <div className="dot" id={`color-${v}`} />
